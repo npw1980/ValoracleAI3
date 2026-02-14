@@ -19,63 +19,10 @@ import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/Tabs';
 
-const contracts = [
-  {
-    id: '1',
-    name: 'Payer Contract - ABC-123',
-    type: 'Payer',
-    counterparty: 'BlueCross BlueShield',
-    asset: 'ABC-123',
-    status: 'Active',
-    value: '$2.5M',
-    startDate: 'Jan 1, 2026',
-    endDate: 'Dec 31, 2026',
-    owner: 'Sarah M.',
-  },
-  {
-    id: '2',
-    name: 'PBM Contract - DEF-456',
-    type: 'PBM',
-    counterparty: 'CVS Health',
-    asset: 'DEF-456',
-    status: 'Pending',
-    value: '$1.8M',
-    startDate: 'Mar 1, 2026',
-    endDate: 'Feb 28, 2027',
-    owner: 'John D.',
-  },
-  {
-    id: '3',
-    name: 'Health System Agreement',
-    type: 'Health System',
-    counterparty: 'Mayo Clinic',
-    asset: 'ABC-123',
-    status: 'Draft',
-    value: '$500K',
-    startDate: 'Apr 1, 2026',
-    endDate: 'Mar 31, 2027',
-    owner: 'Mike R.',
-  },
-  {
-    id: '4',
-    name: 'GPO Contract - Oncology',
-    type: 'GPO',
-    counterparty: 'Vizient',
-    asset: 'GHI-789',
-    status: 'Review',
-    value: '$3.2M',
-    startDate: 'May 1, 2026',
-    endDate: 'Apr 30, 2028',
-    owner: 'Sarah M.',
-  },
-];
+// Empty states - no mock data for testing
+const contracts: { id: string; name: string; type: string; counterparty: string; asset: string; status: string; value: string; startDate: string; endDate: string; owner: string }[] = [];
 
-const recentActivity = [
-  { id: '1', action: 'Contract executed', item: 'Payer Contract - ABC-123', user: 'Sarah M.', time: '2 hours ago' },
-  { id: '2', action: 'Comments added', item: 'PBM Contract - DEF-456', user: 'John D.', time: 'Yesterday' },
-  { id: '3', action: 'Sent for review', item: 'Health System Agreement', user: 'Mike R.', time: '2 days ago' },
-  { id: '4', action: 'Value updated', item: 'GPO Contract - Oncology', user: 'Sarah M.', time: '3 days ago' },
-];
+const recentActivity: { id: string; action: string; item: string; user: string; time: string }[] = [];
 
 export function Contracts() {
   const [activeTab, setActiveTab] = useState('all');

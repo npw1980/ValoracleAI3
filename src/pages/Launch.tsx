@@ -20,28 +20,8 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { launchTemplates, analysisTemplates, contractTemplates, getTotalSteps, getTotalDays } from '../data/templates';
 
-const activeWorkflows = [
-  {
-    id: '1',
-    name: 'ABC-123 Launch Workflow',
-    asset: 'ABC-123',
-    status: 'Active',
-    progress: 65,
-    currentStep: 'Evidence Review',
-    startDate: 'Jan 15, 2026',
-    dueDate: 'Apr 15, 2026',
-  },
-  {
-    id: '2',
-    name: 'DEF-456 Launch Workflow',
-    asset: 'DEF-456',
-    status: 'Paused',
-    progress: 30,
-    currentStep: 'Pricing Strategy',
-    startDate: 'Feb 1, 2026',
-    dueDate: 'May 1, 2026',
-  },
-];
+// Empty state - no mock data for testing
+const activeWorkflows: { id: string; name: string; asset: string; status: string; progress: number; currentStep: string; startDate: string; dueDate: string }[] = [];
 
 export function Launch() {
   const navigate = useNavigate();

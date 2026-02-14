@@ -11,25 +11,10 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
 
-const recentDocuments = [
-  { id: '1', name: 'Competitive Analysis - NSCLC Market', type: 'Report', updatedAt: '2 hours ago', starred: true },
-  { id: '2', name: 'ABC-123 Evidence Gap Analysis', type: 'Analysis', updatedAt: 'Yesterday', starred: true },
-  { id: '3', name: 'Pricing Strategy Q1 2026', type: 'Strategy', updatedAt: '2 days ago', starred: false },
-  { id: '4', name: 'KOL Interview Summary - Dr. Smith', type: 'Notes', updatedAt: '3 days ago', starred: false },
-  { id: '5', name: 'HEOR Model Results', type: 'Model', updatedAt: '1 week ago', starred: false },
-];
-
-const landscapes = [
-  { id: '1', name: 'NSCLC Competitive Landscape', assets: 5, status: 'Active', lastUpdated: '1 day ago' },
-  { id: '2', name: 'Heart Failure Market Analysis', assets: 3, status: 'Active', lastUpdated: '3 days ago' },
-  { id: '3', name: 'Alzheimers Pipeline Review', assets: 4, status: 'Draft', lastUpdated: '1 week ago' },
-];
-
-const monitors = [
-  { id: '1', name: 'Competitor Pricing - Keytruda', frequency: 'Weekly', status: 'Active', nextUpdate: 'Tomorrow' },
-  { id: '2', name: 'Clinical Trial Updates', frequency: 'Daily', status: 'Active', nextUpdate: 'In 2 hours' },
-  { id:  '3', name: 'Regulatory Changes', frequency: 'Weekly', status: 'Paused', nextUpdate: 'N/A' },
-];
+// Empty states - no mock data for testing
+const recentDocuments: { id: string; name: string; type: string; updatedAt: string; starred: boolean }[] = [];
+const landscapes: { id: string; name: string; assets: number; status: string; lastUpdated: string }[] = [];
+const monitors: { id: string; name: string; frequency: string; status: string; nextUpdate: string }[] = [];
 
 export function Research() {
   const [searchQuery, setSearchQuery] = useState('');

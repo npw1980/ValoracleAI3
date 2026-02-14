@@ -18,25 +18,10 @@ import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/Tabs';
 
-const competitors = [
-  { id: '1', name: 'Keytruda', company: 'Merck', revenue: '$25B', trend: '+12%', marketShare: 35 },
-  { id: '2', name: 'Opdivo', company: 'BMS', revenue: '$18B', trend: '+5%', marketShare: 25 },
-  { id: '3', name: 'Libtayo', company: 'Sanofi/Regeneron', revenue: '$3B', trend: '+18%', marketShare: 8 },
-  { id: '4', name: 'Imfinzi', company: 'AstraZeneca', revenue: '$4B', trend: '+22%', marketShare: 12 },
-];
-
-const pipelineData = [
-  { id: '1', drug: 'ABC-123', company: 'ValOracle', phase: 'Phase 2', indication: 'NSCLC', mechanism: 'TKI' },
-  { id: '2', drug: 'XYZ-789', company: 'Pfizer', phase: 'Phase 3', indication: 'NSCLC', mechanism: 'IO' },
-  { id: '3', drug: 'DEF-456', company: 'Roche', phase: 'Phase 1', indication: 'NSCLC', mechanism: 'ADC' },
-  { id: '4', drug: 'GHI-012', company: 'Novartis', phase: 'Phase 2', indication: 'NSCLC', mechanism: 'TKI' },
-];
-
-const pricingInsights = [
-  { region: 'US', avgPrice: '$45,000', range: '$30K-$65K', payers: 45, coverage: '85%' },
-  { region: 'EU', avgPrice: '€35,000', range: '€25K-€45K', payers: 32, coverage: '72%' },
-  { region: 'Japan', avgPrice: '¥4.2M', range: '¥3M-¥5.5M', payers: 18, coverage: '90%' },
-];
+// Empty states - no mock data for testing
+const competitors: { id: string; name: string; company: string; revenue: string; trend: string; marketShare: number }[] = [];
+const pipelineData: { id: string; drug: string; company: string; phase: string; indication: string; mechanism: string }[] = [];
+const pricingInsights: { region: string; avgPrice: string; range: string; payers: number; coverage: string }[] = [];
 
 // A-03: analyses state is now managed in component (see above)
 

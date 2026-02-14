@@ -20,48 +20,7 @@ import { MetricCard, MiniChart, ProgressRing, AvatarGroup } from '../components/
 import { getDashboardStats, getAssets, getActivity, getTasks } from '../services/api';
 import { useAppStore } from '../stores/appStore';
 
-// Fallback data
-const fallbackStats = [
-  { label: 'Active Assets', value: '12', change: 16, trend: 'up' as const, icon: BarChart3, sparkline: [8, 10, 9, 12, 11, 14, 12] },
-  { label: 'Tasks Due Today', value: '8', change: -27, trend: 'down' as const, icon: Clock, sparkline: [12, 10, 11, 9, 8, 7, 8] },
-  { label: 'Workflows Active', value: '5', change: 20, trend: 'up' as const, icon: Activity, sparkline: [2, 3, 4, 3, 4, 5, 5] },
-  { label: 'Team Members', value: '24', change: 0, trend: 'neutral' as const, icon: Users, sparkline: [22, 23, 24, 24, 24, 24, 24] },
-];
-
-const fallbackPortfolioHealth = [
-  { name: 'ABC-123', health: 85, trend: [70, 75, 78, 82, 85] },
-  { name: 'DEF-456', health: 72, trend: [60, 65, 68, 70, 72] },
-  { name: 'GHI-789', health: 45, trend: [50, 48, 46, 45, 45] },
-  { name: 'JKL-012', health: 90, trend: [85, 87, 88, 89, 90] },
-];
-
-const fallbackRecentAssets = [
-  { id: '1', code: 'ABC-123', name: 'Oncology Candidate X', phase: 'Phase 2', status: 'Active', indication: 'NSCLC', health: 85 },
-  { id: '2', code: 'DEF-456', name: 'Cardio Drug Y', phase: 'Phase 3', status: 'Active', indication: 'Heart Failure', health: 72 },
-  { id: '3', code: 'GHI-789', name: 'Neuro Agent Z', phase: 'Phase 1', status: 'Active', indication: 'Alzheimers', health: 45 },
-];
-
-const fallbackUpcomingTasks = [
-  { id: '1', title: 'Review ABC-123 evidence gaps', priority: 'High', dueDate: 'Today', status: 'Todo' },
-  { id: '2', title: 'Submit pricing proposal', priority: 'Medium', dueDate: 'Tomorrow', status: 'In Progress' },
-  { id: '3', title: 'Complete Q4 HEOR model', priority: 'High', dueDate: 'Feb 15', status: 'Todo' },
-  { id: '4', title: 'Team meeting preparation', priority: 'Low', dueDate: 'Feb 16', status: 'Todo' },
-];
-
-const fallbackRecentActivity = [
-  { id: '1', action: 'Updated', item: 'ABC-123 pricing', user: 'Sarah M.', time: '2 hours ago' },
-  { id: '2', action: 'Created', item: 'New workflow for DEF-456', user: 'John D.', time: '4 hours ago' },
-  { id: '3', action: 'Completed', item: 'Evidence gap analysis', user: 'Sarah M.', time: 'Yesterday' },
-  { id: '4', action: 'Uploaded', item: 'Clinical trial data Q4', user: 'Mike R.', time: 'Yesterday' },
-];
-
-const fallbackTeamMembers = [
-  { name: 'Sarah M.' },
-  { name: 'John D.' },
-  { name: 'Mike R.' },
-  { name: 'Emily C.' },
-  { name: 'David L.' },
-];
+// Empty states for clean testing - no mock data
 
 // Suggestion chips for Ask Val
 const suggestionChips = [
@@ -113,16 +72,16 @@ export function Dashboard() {
       .catch(() => {});
   }, []);
 
-  // Build stats from API or fallback
+  // Build stats from API only - no fallback
   const stats = statsData ? [
-    { label: 'Active Assets', value: String(statsData.activeAssets), change: statsData.portfolioGrowth, trend: 'up' as const, icon: BarChart3, sparkline: [8, 10, 9, 12, 11, 14, 12] },
-    { label: 'Tasks Due Today', value: String(statsData.tasksDueToday), change: -27, trend: 'down' as const, icon: Clock, sparkline: [12, 10, 11, 9, 8, 7, 8] },
-    { label: 'Workflows Active', value: String(statsData.workflowsActive), change: 20, trend: 'up' as const, icon: Activity, sparkline: [2, 3, 4, 3, 4, 5, 5] },
-    { label: 'Team Members', value: String(statsData.teamMembers), change: 0, trend: 'neutral' as const, icon: Users, sparkline: [22, 23, 24, 24, 24, 24, 24] },
-  ] : fallbackStats;
+    { label: 'Active Assets', value: String(statsData.activeAssets || 0), change: statsData.portfolioGrowth || 0, trend: 'up' as const, icon: BarChart3, sparkline: [] },
+    { label: 'Tasks Due Today', value: String(statsData.tasksDueToday || 0), change: 0, trend: 'neutral' as const, icon: Clock, sparkline: [] },
+    { label: 'Workflows Active', value: String(statsData.workflowsActive || 0), change: 0, trend: 'neutral' as const, icon: Activity, sparkline: [] },
+    { label: 'Team Members', value: String(statsData.teamMembers || 0), change: 0, trend: 'neutral' as const, icon: Users, sparkline: [] },
+  ] : [];
 
-  // Use API assets or fallback
-  const recentAssets = assetsData.length > 0 ? assetsData : fallbackRecentAssets;
+  // Use API assets only - no fallback
+  const recentAssets = assetsData.length > 0 ? assetsData : [];
 
   const upcomingTasks = tasksData.length > 0 ? tasksData.slice(0, 4).map((t: any) => ({
     id: t.id,
@@ -130,16 +89,16 @@ export function Dashboard() {
     priority: t.priority || 'Medium',
     dueDate: t.endDate || 'TBD',
     status: t.status
-  })) : fallbackUpcomingTasks;
+  })) : [];
 
   const portfolioHealth = assetsData.length > 0 ? assetsData.slice(0, 4).map((a: any) => ({
     name: a.code,
-    health: a.health,
-    trend: [a.health - 15, a.health - 10, a.health - 7, a.health - 3, a.health]
-  })) : fallbackPortfolioHealth;
+    health: a.health || 0,
+    trend: [0, 0, 0, 0, 0]
+  })) : [];
 
-  const recentActivityData = activityData.length > 0 ? activityData : fallbackRecentActivity;
-  const team = fallbackTeamMembers;
+  const recentActivityData = activityData.length > 0 ? activityData : [];
+  const team: { name: string }[] = [];
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {

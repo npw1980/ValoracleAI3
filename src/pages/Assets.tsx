@@ -21,17 +21,6 @@ import { Tabs, TabsList, TabsTrigger } from '../components/ui/Tabs';
 import { DataTable, type Column } from '../components/ui/DataTable';
 import { getAssets, createAsset, deleteAsset } from '../services/api';
 
-// Fallback mock data
-const mockAssets = [
-  { id: '1', code: 'ABC-123', name: 'Oncology Candidate X', phase: 'Phase 2', status: 'Active', indication: 'NSCLC', therapeuticArea: 'Oncology', teamSize: 5, value: '$250M' },
-  { id: '2', code: 'DEF-456', name: 'Cardio Drug Y', phase: 'Phase 3', status: 'Active', indication: 'Heart Failure', therapeuticArea: 'Cardiology', teamSize: 8, value: '$500M' },
-  { id: '3', code: 'GHI-789', name: 'Neuro Agent Z', phase: 'Phase 1', status: 'Active', indication: 'Alzheimers', therapeuticArea: 'Neurology', teamSize: 4, value: '$150M' },
-  { id: '4', code: 'JKL-012', name: 'Immunotherapy A', phase: 'Phase 2', status: 'Active', indication: 'Melanoma', therapeuticArea: 'Oncology', teamSize: 6, value: '$400M' },
-  { id: '5', code: 'MNO-345', name: 'Rare Disease B', phase: 'Preclinical', status: 'On Hold', indication: 'Orphan Disease', therapeuticArea: 'Rare Disease', teamSize: 3, value: '$50M' },
-  { id: '6', code: 'PQR-678', name: 'Metabolic C', phase: 'Launch', status: 'Active', indication: 'Type 2 Diabetes', therapeuticArea: 'Metabolic', teamSize: 7, value: '$350M' },
-  { id: '7', code: 'STU-901', name: 'Autoimmune D', phase: 'Phase 3', status: 'Active', indication: 'Rheumatoid Arthritis', therapeuticArea: 'Immunology', teamSize: 9, value: '$600M' },
-  { id: '8', code: 'VWX-234', name: 'Anti-viral E', phase: 'Phase 2', status: 'Active', indication: 'Hepatitis C', therapeuticArea: 'Infectious Disease', teamSize: 5, value: '$280M' },
-];
 
 interface Asset {
   id: string;
@@ -86,8 +75,8 @@ export function Assets() {
       }));
       setAssets(transformed);
     } catch (err) {
-      console.log('Using fallback data for assets');
-      setAssets(mockAssets);
+      // No fallback - clean state for testing
+      setAssets([]);
     } finally {
       setLoading(false);
     }

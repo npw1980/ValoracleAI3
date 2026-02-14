@@ -67,13 +67,8 @@ export const useAppStore = create<AppState>((set) => ({
   tasks: [],
   setTasks: (tasks) => set({ tasks }),
 
-  // Notifications - D-01: Added mock notifications so they actually work
-  notifications: [
-    { id: '1', title: 'Task Updated', message: 'ABC-123 Launch workflow was updated by John D.', read: false, actionUrl: '/launch', type: 'info', createdAt: new Date().toISOString() },
-    { id: '2', title: 'Analysis Complete', message: 'Competitive analysis for NSCLC is ready', read: false, actionUrl: '/analyze', type: 'success', createdAt: new Date().toISOString() },
-    { id: '3', title: 'Contract Review', message: 'Payer contract BCBS requires your review', read: false, actionUrl: '/contracts', type: 'warning', createdAt: new Date().toISOString() },
-    { id: '4', title: 'Milestone Approaching', message: 'Phase 3 trial enrollment ends in 3 days', read: true, actionUrl: '/assets', type: 'info', createdAt: new Date().toISOString() },
-  ],
+  // Notifications - empty for clean testing
+  notifications: [],
   addNotification: (notification) => set((state) => ({
     notifications: [notification, ...state.notifications]
   })),

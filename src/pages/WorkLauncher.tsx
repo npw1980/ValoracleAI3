@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Rocket,
-  BarChart3,
-  FileText,
-  Search,
   ChevronRight,
   ArrowRight,
   CheckCircle2,
@@ -19,50 +15,11 @@ import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { useAppStore } from '../stores/appStore';
 
-const workflows = [
-  {
-    id: 'launch',
-    name: 'Launch a Drug',
-    description: 'Complete end-to-end product launch from strategy to market access',
-    icon: Rocket,
-    steps: 22,
-    duration: '12 weeks',
-    color: 'blue',
-  },
-  {
-    id: 'analyze',
-    name: 'Market Analysis',
-    description: 'Competitive intelligence, pricing research, and landscape assessment',
-    icon: BarChart3,
-    steps: 12,
-    duration: '4 weeks',
-    color: 'purple',
-  },
-  {
-    id: 'contract',
-    name: 'Contract Management',
-    description: 'Payer negotiations, contract drafting, and agreement tracking',
-    icon: FileText,
-    steps: 8,
-    duration: '6 weeks',
-    color: 'green',
-  },
-  {
-    id: 'research',
-    name: 'Research Project',
-    description: 'Evidence generation, HEOR studies, and clinical data analysis',
-    icon: Search,
-    steps: 15,
-    duration: '8 weeks',
-    color: 'amber',
-  },
-];
+// Empty states - no mock data for testing
 
-const recentWork = [
-  { id: '1', name: 'ABC-123 Launch Workflow', type: 'Launch', status: 'Active', progress: 65 },
-  { id: '2', name: 'NSCLC Competitive Analysis', type: 'Analysis', status: 'Completed', progress: 100 },
-  { id: '3', name: 'Payer Contract - BCBS', type: 'Contract', status: 'In Progress', progress: 40 },
-];
+const workflows: { id: string; name: string; description: string; icon: any; steps: number; duration: string; color: string }[] = [];
+
+const recentWork: { id: string; name: string; type: string; status: string; progress: number }[] = [];
 
 export function WorkLauncher() {
   const navigate = useNavigate();

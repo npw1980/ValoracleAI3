@@ -24,52 +24,25 @@ import { Button } from '../components/ui/Button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/Tabs';
 import { Textarea } from '../components/ui/Input';
 
-// Mock asset data
+// Empty state - no mock data for testing
 const assetData = {
-  id: '1',
-  code: 'ABC-123',
-  name: 'Oncology Candidate X',
-  indication: 'Non-Small Cell Lung Cancer (NSCLC)',
-  phase: 'Phase 2',
-  status: 'Active',
-  therapeuticArea: 'Oncology',
-  sponsor: 'ValOracle Pharma',
-  description: 'ABC-123 is a novel small molecule inhibitor targeting a key pathway in NSCLC. Currently in Phase 2 clinical trials with promising efficacy data.',
-  team: [
-    { id: '1', name: 'Sarah M.', role: 'Program Lead' },
-    { id: '2', name: 'John D.', role: 'Medical Lead' },
-    { id: '3', name: 'Mike R.', role: 'HEOR Lead' },
-  ],
-  milestones: [
-    { id: '1', name: 'Phase 2 Initiation', date: 'Jan 2025', status: 'completed' },
-    { id: '2', name: 'Interim Analysis', date: 'Jun 2025', status: 'completed' },
-    { id: '3', name: 'Phase 2 Complete', date: 'Dec 2025', status: 'in-progress' },
-    { id: '4', name: 'Phase 3 Start', date: 'Mar 2026', status: 'pending' },
-  ],
-  evidence: [
-    { id: '1', type: 'Clinical', status: 'complete', name: 'Phase 1 Results' },
-    { id: '2', type: 'Clinical', status: 'in-progress', name: 'Phase 2 Trial' },
-    { id: '3', type: 'HEOR', status: 'gap', name: 'QoL Data' },
-    { id: '4', type: 'Pricing', status: 'gap', name: 'Budget Impact Model' },
-  ],
-  tasks: [
-    { id: '1', title: 'Complete evidence gap analysis', priority: 'High', status: 'In Progress', dueDate: 'Feb 15' },
-    { id: '2', title: 'Update pricing strategy', priority: 'Medium', status: 'Todo', dueDate: 'Feb 20' },
-    { id: '3', title: 'Review HEOR model', priority: 'High', status: 'Todo', dueDate: 'Feb 18' },
-  ],
+  id: '',
+  code: '',
+  name: '',
+  indication: '',
+  phase: '',
+  status: '',
+  therapeuticArea: '',
+  sponsor: '',
+  description: '',
+  team: [] as { id: string; name: string; role: string }[],
+  milestones: [] as { id: string; name: string; date: string; status: string }[],
+  evidence: [] as { id: string; type: string; status: string; name: string }[],
+  tasks: [] as { id: string; title: string; priority: string; status: string; dueDate: string }[],
 };
 
-const heorModels = [
-  { id: '1', name: 'Cost-Effectiveness Model', status: 'Draft', lastUpdated: '2 days ago' },
-  { id: '2', name: 'Budget Impact Model', status: 'Draft', lastUpdated: '1 week ago' },
-  { id: '3', name: 'Patient-level Simulation', status: 'In Progress', lastUpdated: 'Yesterday' },
-];
-
-const pricingData = [
-  { region: 'US', price: '$45,000', status: 'Proposed', indication: 'Per year' },
-  { region: 'EU', price: '€35,000', status: 'Draft', indication: 'Per year' },
-  { region: 'Japan', price: '¥4,500,000', status: 'Draft', indication: 'Per year' },
-];
+const heorModels: { id: string; name: string; status: string; lastUpdated: string }[] = [];
+const pricingData: { region: string; price: string; status: string; indication: string }[] = [];
 
 export function AssetDetail() {
   useParams(); // Get ID from URL for future API calls

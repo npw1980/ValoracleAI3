@@ -16,19 +16,9 @@ import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/Tabs';
 
-const tasks = [
-  { id: '1', title: 'Review ABC-123 evidence gaps', priority: 'High', status: 'Todo', assignee: 'Sarah M.', dueDate: 'Today', asset: 'ABC-123' },
-  { id: '2', title: 'Submit pricing proposal for Phase 2', priority: 'High', status: 'In Progress', assignee: 'John D.', dueDate: 'Tomorrow', asset: 'DEF-456' },
-  { id: '3', title: 'Complete Q4 HEOR model', priority: 'High', status: 'Todo', assignee: 'Mike R.', dueDate: 'Feb 15', asset: 'ABC-123' },
-  { id: '4', title: 'Team meeting preparation', priority: 'Low', status: 'Todo', assignee: 'Nathan W.', dueDate: 'Feb 16', asset: null },
-  { id: '5', title: 'Review contract draft', priority: 'Medium', status: 'Review', assignee: 'Sarah M.', dueDate: 'Feb 12', asset: 'GHI-789' },
-];
-
-const workflows = [
-  { id: '1', name: 'ABC-123 Launch Workflow', type: 'Launch', status: 'Active', progress: 65, stepsCompleted: 8, stepsTotal: 12 },
-  { id: '2', name: 'DEF-456 Evidence Gathering', type: 'Analysis', status: 'Active', progress: 40, stepsCompleted: 4, stepsTotal: 10 },
-  { id: '3', name: 'Pricing Approval Workflow', type: 'Contract', status: 'Draft', progress: 0, stepsCompleted: 0, stepsTotal: 5 },
-];
+// Empty states - no mock data for testing
+const tasks: { id: string; title: string; priority: string; status: string; assignee: string; dueDate: string; asset: string | null }[] = [];
+const workflows: { id: string; name: string; type: string; status: string; progress: number; stepsCompleted: number; stepsTotal: number }[] = [];
 
 export function Workspace() {
   const [activeTab, setActiveTab] = useState('tasks');
