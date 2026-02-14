@@ -83,9 +83,26 @@ export function AssetDetail() {
     valueProposition: 'Cost-effective solution with improved patient outcomes.',
   });
 
-  // AS-02: Milestone click handlers (for future modal implementation)
+  // AS-02: Milestone modal state
+  const [isMilestoneModalOpen, setIsMilestoneModalOpen] = useState(false);
+  const [selectedMilestone, setSelectedMilestone] = useState<any>(null);
+
+  // AS-02: Milestone click handlers - now opens modal
   const handleMilestoneClick = (milestoneId: string) => {
-    console.log('Milestone clicked:', milestoneId);
+    if (milestoneId === 'new') {
+      setSelectedMilestone({ id: 'new', name: '', date: '', status: 'upcoming' });
+    } else {
+      const milestone = assetData.milestones.find(m => m.id === milestoneId);
+      setSelectedMilestone(milestone || null);
+    }
+    setIsMilestoneModalOpen(true);
+  };
+
+  const handleSaveMilestone = () => {
+    // In real app, this would call an API
+    console.log('Saving milestone:', selectedMilestone);
+    setIsMilestoneModalOpen(false);
+    setSelectedMilestone(null);
   };
 
   const getPhaseColor = (phase: string) => {
@@ -500,6 +517,63 @@ export function AssetDetail() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* AS-02: Milestone Modal */}
+      {isMilestoneModalOpen && selectedMilestone && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
+                {selectedMilestone.id === 'new' ? 'Add Milestone' : 'Edit Milestone'}
+              </h3>
+              <button onClick={() => setIsMilestoneModalOpen(false)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded">
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Milestone Name</label>
+                <input
+                  type="text"
+                  value={selectedMilestone.name}
+                  onChange={(e) => setSelectedMilestone({ ...selectedMilestone, name: e.target.value })}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+                  placeholder="e.g., Phase 2 Completion"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Target Date</label>
+                <input
+                  type="date"
+                  value={selectedMilestone.date}
+                  onChange={(e) => setSelectedMilestone({ ...selectedMilestone, date: e.target.value })}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
+                <select
+                  value={selectedMilestone.status}
+                  onChange={(e) => setSelectedMilestone({ ...selectedMilestone, status: e.target.value })}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+                >
+                  <option value="upcoming">Upcoming</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-6">
+              <Button variant="secondary" onClick={() => setIsMilestoneModalOpen(false)} className="flex-1">
+                Cancel
+              </Button>
+              <Button onClick={handleSaveMilestone} className="flex-1">
+                Save
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

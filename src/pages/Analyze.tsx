@@ -38,17 +38,16 @@ const pricingInsights = [
   { region: 'Japan', avgPrice: '¥4.2M', range: '¥3M-¥5.5M', payers: 18, coverage: '90%' },
 ];
 
-const recentAnalyses = [
-  { id: '1', name: 'NSCLC Market Size 2026-2030', type: 'Market Sizing', date: '2 days ago', status: 'Complete' },
-  { id: '2', name: 'Competitor Pricing Analysis', type: 'Pricing', date: '1 week ago', status: 'Complete' },
-  { id: '3', name: 'Payer Access Assessment', type: 'Access', date: '2 weeks ago', status: 'In Review' },
-  { id: '4', name: 'Launch Scenario Modeling', type: 'Forecasting', date: '3 weeks ago', status: 'Draft' },
-];
+// A-03: analyses state is now managed in component (see above)
 
 export function Analyze() {
   const [, setActiveTab] = useState('competitors');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  // A-03: State for created analyses
+  const [analyses, setAnalyses] = useState<{id: string; name: string; type: string; date: string; status: string}[]>([
+    { id: '1', name: 'NSCLC Market Size 2025', type: 'Market Sizing', date: 'Feb 10, 2026', status: 'Complete' }
+  ]);
   const [formData, setFormData] = useState({
     name: '',
     type: 'Market Sizing',
@@ -86,10 +85,17 @@ export function Analyze() {
     URL.revokeObjectURL(link.href);
   };
 
-  // Handle form submission
+  // Handle form submission - A-03: Actually save the analysis
   const handleCreateAnalysis = () => {
-    // Here you would typically send the data to your backend
-    console.log('Creating analysis:', formData);
+    if (!formData.name) return; // Basic validation
+    const newAnalysis = {
+      id: String(Date.now()),
+      name: formData.name,
+      type: formData.type,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      status: 'Draft'
+    };
+    setAnalyses([newAnalysis, ...analyses]);
     setIsModalOpen(false);
     setFormData({ name: '', type: 'Market Sizing', indication: '', region: 'US' });
   };
@@ -344,7 +350,7 @@ export function Analyze() {
           <Card>
             <CardContent className="p-0">
               <div className="divide-y divide-slate-100">
-                {recentAnalyses.map((analysis) => (
+                {analyses.map((analysis) => (
                   <div key={analysis.id} className="flex items-center justify-between px-6 py-4 hover:bg-slate-50 cursor-pointer">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center">

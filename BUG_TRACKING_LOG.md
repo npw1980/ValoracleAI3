@@ -84,10 +84,14 @@
 - **New Fixes Applied**: 6
 
 ### New Fixes Applied This Session:
-1. **D-02**: Added `valQuery` and `setValQuery` to appStore, wired up Dashboard suggestion chips and ValPanel
-2. **W-03**: Added 3-dot menu and Pause/Play buttons to workflow cards in WorkLauncher
-3. **P-02**: Fixed GanttChart z-index for task name column
-4. **A-01**: Added explicit margin-top to Analyze tabs
+1. **D-01**: Added mock notifications to store so notification clicks actually work
+2. **D-02**: Added `valQuery` and `setValQuery` to appStore, wired up Dashboard suggestion chips and ValPanel
+3. **D-03**: Made Portfolio Health rows clickable to navigate to asset details
+4. **W-03**: Added 3-dot menu and Pause/Play buttons to workflow cards in WorkLauncher
+5. **P-02**: Fixed GanttChart z-index for task name column
+6. **A-01**: Added explicit margin-top to Analyze tabs
+7. **A-03**: Fixed Create Analysis - now actually adds to analyses list instead of just logging
+8. **AS-02**: Fixed Milestones - added modal for adding/editing milestones
 
 ---
 

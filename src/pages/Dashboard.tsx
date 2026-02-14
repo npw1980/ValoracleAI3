@@ -224,7 +224,12 @@ export function Dashboard() {
             <CardContent className="p-0">
               <div className="divide-y divide-slate-100">
                 {portfolioHealth.map((asset) => (
-                  <div key={asset.name} className="flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
+                  <div
+                    key={asset.name}
+                    className="flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors cursor-pointer"
+                    onClick={() => navigate(`/assets/${asset.name.toLowerCase()}`)}
+                    title={`${asset.name}: ${asset.health}% health score. Click to view asset details.`}
+                  >
                     <div className="flex items-center gap-4">
                       <ProgressRing value={asset.health} size={48} color={asset.health >= 70 ? '#10b981' : asset.health >= 50 ? '#f59e0b' : '#ef4444'} />
                       <div>
