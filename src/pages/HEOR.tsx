@@ -53,25 +53,16 @@ const defaultParameters: ModelParameter[] = [
   { id: 'survivalUntreated', name: 'Survival (Untreated)', value: 65, unit: '%', range: { min: 0, max: 100 }, description: '5-year survival rate untreated' },
 ];
 
-const resultsTemplate = {
-  icer: 45230,
-  qalysGained: 2.1,
-  incrementalCost: 285000,
-  totalCostTreated: 520000,
-  totalCostUntreated: 235000,
-  lYgained: 2.8,
-  nmb: 85000,
-  confidenceInterval: { low: 35000, high: 62000 },
-};
-
-interface APIResult {
-  totalCost: number;
-  qalyTreated: number;
-  qalyUntreated: number;
-  qalyGained: number;
+type ResultsTemplate = {
   icer: number;
+  qalysGained: number;
   incrementalCost: number;
-}
+  totalCostTreated: number;
+  totalCostUntreated: number;
+  lYgained: number;
+  nmb: number;
+  confidenceInterval: { low: number; high: number };
+};
 
 export function HEORModelBuilder() {
   const [parameters, setParameters] = useState<ModelParameter[]>(defaultParameters);
@@ -80,7 +71,7 @@ export function HEORModelBuilder() {
   ]);
   const [selectedScenario, setSelectedScenario] = useState('base');
   const [isRunning, setIsRunning] = useState(false);
-  const [results, setResults] = useState<typeof resultsTemplate | null>(null);
+  const [results, setResults] = useState<ResultsTemplate | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<string[]>(['population', 'costs', 'outcomes']);
 
@@ -101,7 +92,8 @@ export function HEORModelBuilder() {
     });
 
     try {
-      const apiResult = await runHEORModel(apiParams) as APIResult;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const apiResult = await runHEORModel(apiParams) as any;
 
       // Transform API result to frontend format
       setResults({
@@ -117,7 +109,7 @@ export function HEORModelBuilder() {
           high: Math.round(apiResult.icer * 1.25)
         },
       });
-    } catch (err) {
+    } catch {
       console.log('HEOR API failed, using local calculation');
       // Fallback to local calculation
       const timeHorizon = parameters.find(p => p.id === 'timeHorizon')?.value || 10;

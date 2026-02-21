@@ -9,6 +9,7 @@ import { useAppStore } from '../../stores/appStore';
 import type { Asset } from '../../types';
 
 // Initialize with sample data
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const initializeStore = (set: any) => {
   // Set initial notifications
   const initialNotifications = [

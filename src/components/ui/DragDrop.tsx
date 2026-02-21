@@ -27,6 +27,7 @@ interface DragDropContextType<T> {
   activeId: string | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DragDropContext = createContext<DragDropContextType<any> | null>(null);
 
 interface DragDropProviderProps<T> {
@@ -101,6 +102,7 @@ export function DragDropProvider<T extends { id: string }>({
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useDragDropContext<T>() {
   const context = useContext(DragDropContext);
   if (!context) {

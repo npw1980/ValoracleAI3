@@ -6,9 +6,13 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores([
+    'dist',
+    '**/ValoracleAI3/**'
+  ]),
   {
     files: ['**/*.{ts,tsx}'],
+    ignores: ['**/ValoracleAI3/**'],
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,

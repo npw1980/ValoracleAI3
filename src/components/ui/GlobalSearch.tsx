@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Search,
@@ -45,16 +45,14 @@ export function GlobalSearch() {
   const navigate = useNavigate();
   const { commandPaletteOpen, setCommandPaletteOpen } = useAppStore();
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<SearchResult[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [recentSearches] = useState(['ABC-123', 'launch workflow', 'pricing analysis']);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Filter results based on query
-  useEffect(() => {
+  // Use useMemo for filtered results - derived state, no setState in effect needed
+  const filteredResults = useMemo(() => {
     if (!query.trim()) {
-      setResults([]);
-      return;
+      return [];
     }
 
     const q = query.toLowerCase();
@@ -62,7 +60,7 @@ export function GlobalSearch() {
 
     // Search through all categories
     Object.entries(searchData).forEach(([category, items]) => {
-      items.forEach((item: any) => {
+      items.forEach((item) => {
         if (
           item.name.toLowerCase().includes(q) ||
           item.subtitle.toLowerCase().includes(q)
@@ -75,16 +73,18 @@ export function GlobalSearch() {
       });
     });
 
-    setResults(allResults.slice(0, 8));
-    setSelectedIndex(0);
+    return allResults.slice(0, 8);
   }, [query]);
 
-  // Focus input when opened
+  // Focus input when opened - defer state updates using requestAnimationFrame
   useEffect(() => {
     if (commandPaletteOpen) {
-      inputRef.current?.focus();
-      setQuery('');
-      setResults([]);
+      // Use requestAnimationFrame to defer state updates until after render
+      const frameId = requestAnimationFrame(() => {
+        inputRef.current?.focus();
+        setQuery('');
+      });
+      return () => cancelAnimationFrame(frameId);
     }
   }, [commandPaletteOpen]);
 
@@ -99,7 +99,7 @@ export function GlobalSearch() {
           break;
         case 'ArrowDown':
           e.preventDefault();
-          setSelectedIndex(i => Math.min(i + 1, results.length - 1));
+          setSelectedIndex(i => Math.min(i + 1, filteredResults.length - 1));
           break;
         case 'ArrowUp':
           e.preventDefault();
@@ -107,8 +107,8 @@ export function GlobalSearch() {
           break;
         case 'Enter':
           e.preventDefault();
-          if (results[selectedIndex]) {
-            navigate(results[selectedIndex].url);
+          if (filteredResults[selectedIndex]) {
+            navigate(filteredResults[selectedIndex].url);
             setCommandPaletteOpen(false);
           }
           break;
@@ -117,7 +117,7 @@ export function GlobalSearch() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [commandPaletteOpen, results, selectedIndex, navigate, setCommandPaletteOpen]);
+  }, [commandPaletteOpen, filteredResults, selectedIndex, navigate, setCommandPaletteOpen]);
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -179,12 +179,12 @@ export function GlobalSearch() {
         <div className="max-h-96 overflow-y-auto">
           {query.trim() ? (
             // Search Results
-            results.length > 0 ? (
+            filteredResults.length > 0 ? (
               <div className="py-2">
                 <div className="px-4 py-2 text-xs font-medium text-slate-500 uppercase tracking-wider">
                   Results
                 </div>
-                {results.map((result, index) => {
+                {filteredResults.map((result, index) => {
                   const Icon = getTypeIcon(result.type);
                   return (
                     <button

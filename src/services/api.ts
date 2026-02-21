@@ -1,5 +1,13 @@
 const API_BASE = 'http://localhost:3002/api';
 
+interface DashboardStats {
+  portfolioGrowth: number;
+  activeAssets: number;
+  tasksDueToday: number;
+  workflowsActive: number;
+  teamMembers: number;
+}
+
 async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${endpoint}`, {
     headers: {
@@ -17,33 +25,29 @@ async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> 
 
 // Dashboard
 export async function getDashboardStats() {
-  return fetchAPI<{
-    portfolioGrowth: number;
-    activeAssets: number;
-    tasksDueToday: number;
-    workflowsActive: number;
-    teamMembers: number;
-  }>('/dashboard/stats');
+  return fetchAPI<DashboardStats>('/dashboard/stats');
 }
 
-// Assets
+// Assets - use existing Asset type from types
+import type { Asset, Task, TeamMember } from '../types';
+
 export async function getAssets() {
-  return fetchAPI<any[]>('/assets');
+  return fetchAPI<Asset[]>('/assets');
 }
 
 export async function getAsset(id: string) {
-  return fetchAPI<any>(`/assets/${id}`);
+  return fetchAPI<Asset>(`/assets/${id}`);
 }
 
-export async function createAsset(data: any) {
-  return fetchAPI<any>('/assets', {
+export async function createAsset(data: Partial<Asset>) {
+  return fetchAPI<Asset>('/assets', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
-export async function updateAsset(id: string, data: any) {
-  return fetchAPI<any>(`/assets/${id}`, {
+export async function updateAsset(id: string, data: Partial<Asset>) {
+  return fetchAPI<Asset>(`/assets/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   });
@@ -56,23 +60,34 @@ export async function deleteAsset(id: string) {
 }
 
 // Projects
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  status: string;
+  tasks: Task[];
+  members: TeamMember[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export async function getProjects() {
-  return fetchAPI<any[]>('/projects');
+  return fetchAPI<Project[]>('/projects');
 }
 
 export async function getProject(id: string) {
-  return fetchAPI<any>(`/projects/${id}`);
+  return fetchAPI<Project>(`/projects/${id}`);
 }
 
-export async function createProject(data: any) {
-  return fetchAPI<any>('/projects', {
+export async function createProject(data: Partial<Project>) {
+  return fetchAPI<Project>('/projects', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
-export async function updateProject(id: string, data: any) {
-  return fetchAPI<any>(`/projects/${id}`, {
+export async function updateProject(id: string, data: Partial<Project>) {
+  return fetchAPI<Project>(`/projects/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   });
@@ -81,18 +96,18 @@ export async function updateProject(id: string, data: any) {
 // Tasks
 export async function getTasks(projectId?: string) {
   const query = projectId ? `?projectId=${projectId}` : '';
-  return fetchAPI<any[]>(`/tasks${query}`);
+  return fetchAPI<Task[]>(`/tasks${query}`);
 }
 
-export async function createTask(data: any) {
-  return fetchAPI<any>('/tasks', {
+export async function createTask(data: Omit<Task, 'id' | 'createdAt'>) {
+  return fetchAPI<Task>('/tasks', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
-export async function updateTask(id: string, data: any) {
-  return fetchAPI<any>(`/tasks/${id}`, {
+export async function updateTask(id: string, data: Partial<Task>) {
+  return fetchAPI<Task>(`/tasks/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   });
@@ -100,46 +115,66 @@ export async function updateTask(id: string, data: any) {
 
 // Advisors
 export async function getAdvisors() {
-  return fetchAPI<any[]>('/advisors');
+  return fetchAPI<TeamMember[]>('/advisors');
 }
 
 export async function getAdvisor(id: string) {
-  return fetchAPI<any>(`/advisors/${id}`);
+  return fetchAPI<TeamMember>(`/advisors/${id}`);
 }
 
-export async function createAdvisor(data: any) {
-  return fetchAPI<any>('/advisors', {
+export async function createAdvisor(data: Omit<TeamMember, 'id'>) {
+  return fetchAPI<TeamMember>('/advisors', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
 // Contracts
-export async function getContracts() {
-  return fetchAPI<any[]>('/contracts');
+interface Contract {
+  id: string;
+  title: string;
+  parties: string[];
+  status: string;
+  value: number;
+  startDate: string;
+  endDate: string;
+  createdAt: string;
 }
 
-export async function createContract(data: any) {
-  return fetchAPI<any>('/contracts', {
+export async function getContracts() {
+  return fetchAPI<Contract[]>('/contracts');
+}
+
+export async function createContract(data: Omit<Contract, 'id' | 'createdAt'>) {
+  return fetchAPI<Contract>('/contracts', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
-export async function updateContract(id: string, data: any) {
-  return fetchAPI<any>(`/contracts/${id}`, {
+export async function updateContract(id: string, data: Partial<Contract>) {
+  return fetchAPI<Contract>(`/contracts/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   });
 }
 
 // Forum
-export async function getForumPosts() {
-  return fetchAPI<any[]>('/forum/posts');
+interface ForumPost {
+  id: string;
+  title: string;
+  content: string;
+  author: TeamMember;
+  replies: number;
+  createdAt: string;
 }
 
-export async function createForumPost(data: any) {
-  return fetchAPI<any>('/forum/posts', {
+export async function getForumPosts() {
+  return fetchAPI<ForumPost[]>('/forum/posts');
+}
+
+export async function createForumPost(data: Omit<ForumPost, 'id' | 'author' | 'replies' | 'createdAt'>) {
+  return fetchAPI<ForumPost>('/forum/posts', {
     method: 'POST',
     body: JSON.stringify(data),
   });
@@ -147,17 +182,38 @@ export async function createForumPost(data: any) {
 
 // Team
 export async function getTeamMembers() {
-  return fetchAPI<any[]>('/team');
+  return fetchAPI<TeamMember[]>('/team');
 }
 
 // Activity
+interface Activity {
+  id: string;
+  type: string;
+  description: string;
+  user: TeamMember;
+  assetId?: string;
+  createdAt: string;
+}
+
 export async function getActivity() {
-  return fetchAPI<any[]>('/activity');
+  return fetchAPI<Activity[]>('/activity');
 }
 
 // HEOR
-export async function runHEORModel(data: any) {
-  return fetchAPI<any>('/heor/run', {
+interface HEORModelInput {
+  assetId: string;
+  parameters: Record<string, number>;
+}
+
+interface HEORModelResult {
+  id: string;
+  assetId: string;
+  results: Record<string, number>;
+  createdAt: string;
+}
+
+export async function runHEORModel(data: Partial<HEORModelInput>) {
+  return fetchAPI<HEORModelResult>('/heor/run', {
     method: 'POST',
     body: JSON.stringify(data),
   });

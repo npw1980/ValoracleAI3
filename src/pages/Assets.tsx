@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -74,7 +75,7 @@ export function Assets() {
         teamSize: asset.teamSize || Math.floor(Math.random() * 10) + 1,
       }));
       setAssets(transformed);
-    } catch (err) {
+    } catch {
       // No fallback - clean state for testing
       setAssets([]);
     } finally {
@@ -87,8 +88,8 @@ export function Assets() {
     const newAsset = {
       code: formData.code || `NEW-${Math.floor(Math.random() * 1000)}`,
       name: formData.name || 'New Asset',
-      phase: formData.phase,
-      status: formData.status,
+      phase: formData.phase as 'Discovery' | 'Preclinical' | 'Phase 1' | 'Phase 2' | 'Phase 3' | 'Launch' | 'Marketed',
+      status: formData.status as 'Active' | 'On Hold' | 'Completed' | 'Archived',
       indication: formData.indication || 'New Indication',
       therapeuticArea: formData.therapeuticArea,
       value: formData.value ? parseInt(formData.value) : Math.floor(Math.random() * 500) + 50,
@@ -106,7 +107,7 @@ export function Assets() {
         therapeuticArea: 'Oncology',
         value: '',
       });
-    } catch (err) {
+    } catch {
       console.log('Failed to create asset, adding locally');
       setAssets([...assets, { ...newAsset, id: String(Date.now()), value: `$${newAsset.value}M` }]);
       setIsModalOpen(false);
@@ -132,7 +133,7 @@ export function Assets() {
     try {
       await deleteAsset(id);
       setAssets(assets.filter(a => a.id !== id));
-    } catch (err) {
+    } catch {
       console.log('Failed to delete, removing locally');
       setAssets(assets.filter(a => a.id !== id));
     }

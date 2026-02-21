@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { X, LayoutDashboard, Rocket, BarChart3, FileText, Briefcase, FolderOpen, Users, Settings, Menu, ChevronRight, ListTodo, Beaker, Calculator, Database, Shield, CreditCard, MessageSquare, Code, Smartphone } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -104,7 +105,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
   );
 }
 
-function NavItem({ path, icon: Icon, label, onClick }: { path: string; icon: any; label: string; onClick: () => void }) {
+function NavItem({ path, icon: Icon, label, onClick }: { path: string; icon: LucideIcon; label: string; onClick: () => void }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isActive = location.pathname === path;

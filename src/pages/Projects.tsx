@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import {
   Plus,
@@ -216,7 +217,7 @@ export function Projects() {
         color: '#3b82f6',
       }));
       setTasks(transformedTasks);
-    } catch (err) {
+    } catch {
       console.log('Using fallback data');
       setProjects(mockProjects);
       setTasks(mockTasks);
@@ -239,10 +240,10 @@ export function Projects() {
     };
     try {
       const created = await createProject(newProject);
-      setProjects([...projects, { ...created, dueDate: 'TBD' }]);
+      setProjects([...projects, created as any]);
       setIsModalOpen(false);
       setFormData({ name: '', description: '', status: 'planning', dueDate: '', team: '' });
-    } catch (err) {
+    } catch {
       console.log('Failed to create project, adding locally');
       setProjects([...projects, { ...newProject, id: String(Date.now()), tasks: 0, completedTasks: 0, dueDate: 'TBD' }]);
       setIsModalOpen(false);

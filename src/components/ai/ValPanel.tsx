@@ -29,14 +29,20 @@ export function ValPanel({ open, onClose }: ValPanelProps) {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const prevValQueryRef = useRef(valQuery);
 
-  // Apply valQuery from store when panel opens
+  // Apply valQuery from store when panel opens - use ref to avoid cascading renders
   useEffect(() => {
-    if (open && valQuery) {
-      setInput(valQuery);
-      setValQuery(''); // Clear after applying
+    if (valQuery && valQuery !== prevValQueryRef.current) {
+      prevValQueryRef.current = valQuery;
+      // Use timeout to avoid synchronous setState in effect
+      const timer = setTimeout(() => {
+        setInput(valQuery);
+        setValQuery('');
+      }, 0);
+      return () => clearTimeout(timer);
     }
-  }, [open, valQuery, setValQuery]);
+  }, [valQuery, setValQuery]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
