@@ -20,14 +20,31 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { launchTemplates, analysisTemplates, contractTemplates, getTotalSteps, getTotalDays } from '../data/templates';
 
-// Empty state - no mock data for testing
-const activeWorkflows: { id: string; name: string; asset: string; status: string; progress: number; currentStep: string; startDate: string; dueDate: string }[] = [];
+import { useEffect } from 'react';
+import { getWorkflows, createWorkflow } from '../services/api';
+
+interface Workflow {
+  id: string;
+  name: string;
+  asset: string;
+  status: string;
+  progress: number;
+  currentStep: string;
+  startDate: string;
+  dueDate: string;
+}
 
 export function Launch() {
   const navigate = useNavigate();
   const [showWizard, setShowWizard] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [activeWorkflows, setActiveWorkflows] = useState<Workflow[]>([]);
+
+  useEffect(() => {
+    // Fetch workflows on mount
+    getWorkflows().then(data => setActiveWorkflows(data)).catch(console.error);
+  }, []);
 
   // W-05: Wizard checkbox state
   const [wizardOptions, setWizardOptions] = useState({
@@ -49,17 +66,51 @@ export function Launch() {
   };
 
   // W-06: Handle start workflow
-  const handleStartWorkflow = () => {
+  const handleStartWorkflow = async () => {
     if (!selectedTemplate) return;
+
+    const template = [...launchTemplates, ...analysisTemplates, ...contractTemplates].find(t => t.id === selectedTemplate);
+    if (!template) return;
 
     console.log('Starting workflow:', {
       template: selectedTemplate,
       options: wizardOptions,
     });
-    // In a real app, this would call an API to create and start the workflow
-    // Navigate to the workflow detail page
-    setShowWizard(false);
-    navigate('/launch', { state: { workflowStarted: true } });
+
+    const newWorkflowData = {
+      name: template.name,
+      asset: 'New Asset', // Placeholder
+      status: 'Active',
+      progress: 0,
+      currentStep: template.steps[0]?.steps[0]?.name || 'Initial Step',
+      startDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      dueDate: new Date(Date.now() + (getTotalDays(template) || 30) * 86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    };
+
+    try {
+      const createdWorkflow = await createWorkflow({
+        name: newWorkflowData.name,
+        type: template.type || template.category,
+        status: newWorkflowData.status,
+        progress: newWorkflowData.progress,
+        stepsTotal: getTotalSteps(template) || 12,
+      });
+      const mappedWorkflow: Workflow = {
+        id: createdWorkflow.id,
+        name: createdWorkflow.name,
+        asset: newWorkflowData.asset,
+        status: createdWorkflow.status,
+        progress: createdWorkflow.progress,
+        currentStep: newWorkflowData.currentStep,
+        startDate: newWorkflowData.startDate,
+        dueDate: newWorkflowData.dueDate
+      };
+
+      setActiveWorkflows(prev => [...prev, mappedWorkflow]);
+      setShowWizard(false);
+    } catch (error) {
+      console.error('Failed to create workflow:', error);
+    }
   };
 
   const toggleWizardOption = (key: keyof typeof wizardOptions) => {
@@ -104,11 +155,10 @@ export function Launch() {
           <button
             key={cat}
             onClick={() => setCategoryFilter(cat)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              categoryFilter === cat
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
-            }`}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${categoryFilter === cat
+              ? 'bg-blue-600 text-white'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+              }`}
           >
             {cat === 'all' ? 'All Templates' : cat.charAt(0).toUpperCase() + cat.slice(1)}
           </button>
@@ -198,9 +248,8 @@ export function Launch() {
             <Card
               key={template.id}
               variant="bordered"
-              className={`cursor-pointer hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all ${
-                selectedTemplate === template.id ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : ''
-              }`}
+              className={`cursor-pointer hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all ${selectedTemplate === template.id ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : ''
+                }`}
               onClick={() => setSelectedTemplate(template.id)}
             >
               <CardContent className="p-5">
@@ -260,9 +309,8 @@ export function Launch() {
               <div className="flex items-center justify-center gap-4 mb-8">
                 {['Template', 'Asset', 'Customize'].map((step, i) => (
                   <div key={step} className="flex items-center gap-2">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                      i === 0 ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-500'
-                    }`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${i === 0 ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-500'
+                      }`}>
                       {i + 1}
                     </div>
                     <span className={`text-sm ${i === 0 ? 'text-slate-800 dark:text-white font-medium' : 'text-slate-500'}`}>
@@ -281,11 +329,10 @@ export function Launch() {
                     <button
                       key={template.id}
                       onClick={() => setSelectedTemplate(template.id)}
-                      className={`p-4 rounded-lg border-2 text-left transition-colors ${
-                        selectedTemplate === template.id
-                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                          : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
-                      }`}
+                      className={`p-4 rounded-lg border-2 text-left transition-colors ${selectedTemplate === template.id
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                        : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                        }`}
                     >
                       <h4 className="font-medium text-slate-800 dark:text-white">{template.name}</h4>
                       <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{getTotalSteps(template)} steps • {getTotalDays(template)} days</p>
@@ -324,11 +371,10 @@ export function Launch() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {/* W-05: Include Team Members checkbox */}
                       <label
-                        className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
-                          wizardOptions.includeTeam
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                            : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
-                        }`}
+                        className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${wizardOptions.includeTeam
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                          : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                          }`}
                       >
                         <input
                           type="checkbox"
@@ -336,11 +382,10 @@ export function Launch() {
                           onChange={() => toggleWizardOption('includeTeam')}
                           className="sr-only"
                         />
-                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                          wizardOptions.includeTeam
-                            ? 'bg-blue-500 border-blue-500'
-                            : 'border-slate-300'
-                        }`}>
+                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${wizardOptions.includeTeam
+                          ? 'bg-blue-500 border-blue-500'
+                          : 'border-slate-300'
+                          }`}>
                           {wizardOptions.includeTeam && <Check className="w-3 h-3 text-white" />}
                         </div>
                         <span className="text-sm text-slate-700 dark:text-slate-300">Include team member assignments</span>
@@ -348,11 +393,10 @@ export function Launch() {
 
                       {/* W-05: Include Timeline checkbox */}
                       <label
-                        className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
-                          wizardOptions.includeTimeline
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                            : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
-                        }`}
+                        className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${wizardOptions.includeTimeline
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                          : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                          }`}
                       >
                         <input
                           type="checkbox"
@@ -360,11 +404,10 @@ export function Launch() {
                           onChange={() => toggleWizardOption('includeTimeline')}
                           className="sr-only"
                         />
-                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                          wizardOptions.includeTimeline
-                            ? 'bg-blue-500 border-blue-500'
-                            : 'border-slate-300'
-                        }`}>
+                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${wizardOptions.includeTimeline
+                          ? 'bg-blue-500 border-blue-500'
+                          : 'border-slate-300'
+                          }`}>
                           {wizardOptions.includeTimeline && <Check className="w-3 h-3 text-white" />}
                         </div>
                         <span className="text-sm text-slate-700 dark:text-slate-300">Include detailed timeline</span>
@@ -372,11 +415,10 @@ export function Launch() {
 
                       {/* W-05: Include Budget checkbox */}
                       <label
-                        className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
-                          wizardOptions.includeBudget
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                            : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
-                        }`}
+                        className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${wizardOptions.includeBudget
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                          : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                          }`}
                       >
                         <input
                           type="checkbox"
@@ -384,11 +426,10 @@ export function Launch() {
                           onChange={() => toggleWizardOption('includeBudget')}
                           className="sr-only"
                         />
-                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                          wizardOptions.includeBudget
-                            ? 'bg-blue-500 border-blue-500'
-                            : 'border-slate-300'
-                        }`}>
+                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${wizardOptions.includeBudget
+                          ? 'bg-blue-500 border-blue-500'
+                          : 'border-slate-300'
+                          }`}>
                           {wizardOptions.includeBudget && <Check className="w-3 h-3 text-white" />}
                         </div>
                         <span className="text-sm text-slate-700 dark:text-slate-300">Include budget tracking</span>
@@ -396,11 +437,10 @@ export function Launch() {
 
                       {/* W-05: Include Notifications checkbox */}
                       <label
-                        className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
-                          wizardOptions.includeNotifications
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                            : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
-                        }`}
+                        className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${wizardOptions.includeNotifications
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                          : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                          }`}
                       >
                         <input
                           type="checkbox"
@@ -408,11 +448,10 @@ export function Launch() {
                           onChange={() => toggleWizardOption('includeNotifications')}
                           className="sr-only"
                         />
-                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                          wizardOptions.includeNotifications
-                            ? 'bg-blue-500 border-blue-500'
-                            : 'border-slate-300'
-                        }`}>
+                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${wizardOptions.includeNotifications
+                          ? 'bg-blue-500 border-blue-500'
+                          : 'border-slate-300'
+                          }`}>
                           {wizardOptions.includeNotifications && <Check className="w-3 h-3 text-white" />}
                         </div>
                         <span className="text-sm text-slate-700 dark:text-slate-300">Enable progress notifications</span>

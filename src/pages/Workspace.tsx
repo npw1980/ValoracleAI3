@@ -17,11 +17,17 @@ import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/Tabs';
 
-// Empty states - no mock data for testing
-const tasks: { id: string; title: string; priority: string; status: string; assignee: string; dueDate: string; asset: string | null }[] = [];
 const workflows: { id: string; name: string; type: string; status: string; progress: number; stepsCompleted: number; stepsTotal: number }[] = [];
 
+import { useEffect } from 'react';
+import { getTasks, createTask } from '../services/api';
+
 export function Workspace() {
+  const [tasks, setTasks] = useState<any[]>([]);
+
+  useEffect(() => {
+    getTasks().then(data => setTasks(data)).catch(console.error);
+  }, []);
   const [activeTab, setActiveTab] = useState('tasks');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -107,8 +113,8 @@ export function Workspace() {
                   </div>
                   <Badge variant={
                     task.status === 'Done' ? 'success' :
-                    task.status === 'In Progress' ? 'info' :
-                    task.status === 'Review' ? 'warning' : 'default'
+                      task.status === 'In Progress' ? 'info' :
+                        task.status === 'Review' ? 'warning' : 'default'
                   }>
                     {task.status}
                   </Badge>
@@ -166,9 +172,24 @@ export function Workspace() {
         footer={
           <div className="flex justify-end gap-3">
             <Button variant="ghost" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-            <Button onClick={() => {
-              setIsModalOpen(false);
-              setFormData({ title: '', priority: 'Medium', assignee: '', dueDate: '', asset: '' });
+            <Button onClick={async () => {
+              const newTaskData = {
+                title: formData.title || 'Untitled Task',
+                priority: formData.priority,
+                status: 'todo', // Default status
+                assignee: formData.assignee || 'Unassigned',
+                dueDate: formData.dueDate || 'TBD',
+                asset: formData.asset || null
+              };
+
+              try {
+                const createdTask = await createTask(newTaskData as any);
+                setTasks(prev => [createdTask, ...prev]);
+                setIsModalOpen(false);
+                setFormData({ title: '', priority: 'Medium', assignee: '', dueDate: '', asset: '' });
+              } catch (error) {
+                console.error('Failed to create task:', error);
+              }
             }}>Create Task</Button>
           </div>
         }

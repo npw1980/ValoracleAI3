@@ -19,6 +19,8 @@ import {
   Save,
   X,
 } from 'lucide-react';
+import { updateAsset } from '../services/api';
+
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -58,6 +60,7 @@ export function AssetDetail() {
   });
 
   // AS-02: Milestone modal state
+  const [milestones, setMilestones] = useState(assetData.milestones);
   const [isMilestoneModalOpen, setIsMilestoneModalOpen] = useState(false);
   const [selectedMilestone, setSelectedMilestone] = useState<any>(null);
 
@@ -66,15 +69,29 @@ export function AssetDetail() {
     if (milestoneId === 'new') {
       setSelectedMilestone({ id: 'new', name: '', date: '', status: 'upcoming' });
     } else {
-      const milestone = assetData.milestones.find(m => m.id === milestoneId);
+      const milestone = milestones.find(m => m.id === milestoneId);
       setSelectedMilestone(milestone || null);
     }
     setIsMilestoneModalOpen(true);
   };
 
-  const handleSaveMilestone = () => {
-    // In real app, this would call an API
-    console.log('Saving milestone:', selectedMilestone);
+  const handleSaveMilestone = async () => {
+    if (selectedMilestone) {
+      let updatedMilestones;
+      if (selectedMilestone.id === 'new') {
+        const newMilestone = { ...selectedMilestone, id: `ms-${Date.now()}` };
+        updatedMilestones = [...milestones, newMilestone];
+      } else {
+        updatedMilestones = milestones.map(m => m.id === selectedMilestone.id ? selectedMilestone : m);
+      }
+
+      try {
+        await updateAsset(assetData.id, { milestones: updatedMilestones });
+        setMilestones(updatedMilestones);
+      } catch (error) {
+        console.error('Failed to update milestones:', error);
+      }
+    }
     setIsMilestoneModalOpen(false);
     setSelectedMilestone(null);
   };
@@ -171,7 +188,7 @@ export function AssetDetail() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {assetData.milestones.map((milestone) => (
+                    {milestones.map((milestone) => (
                       <div
                         key={milestone.id}
                         className="flex items-center gap-4 p-3 -mx-3 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"

@@ -68,10 +68,28 @@ export function AuditLog() {
   const [dateRange, setDateRange] = useState('7d');
 
   const filteredEvents = auditEvents.filter(event => {
-    const matchesSearch = event.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        event.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        event.details.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
+    // Search filter
+    const searchLower = searchQuery.toLowerCase();
+    const matchesSearch = !searchQuery ||
+      event.action.toLowerCase().includes(searchLower) ||
+      event.user.toLowerCase().includes(searchLower) ||
+      event.details.toLowerCase().includes(searchLower) ||
+      event.resource.toLowerCase().includes(searchLower) ||
+      event.ip.includes(searchLower);
+
+    // Category filter
+    let matchesType = true;
+    if (eventFilter === 'auth') {
+      matchesType = event.action.includes('Login') || event.action.includes('Logout');
+    } else if (eventFilter === 'data') {
+      matchesType = event.action.includes('Data') || event.action.includes('Document') || event.action.includes('Asset') || event.action.includes('Model') || event.action.includes('Contract');
+    } else if (eventFilter === 'settings') {
+      matchesType = event.action.includes('Settings');
+    } else if (eventFilter === 'security') {
+      matchesType = event.action.includes('Permission') || event.action.includes('API Key');
+    }
+
+    return matchesSearch && matchesType;
   });
 
   const eventCounts = {
@@ -174,11 +192,10 @@ export function AuditLog() {
               <button
                 key={type.value}
                 onClick={() => setEventFilter(type.value)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  eventFilter === type.value
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${eventFilter === type.value
                     ? 'bg-blue-600 text-white'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
-                }`}
+                  }`}
               >
                 {type.label}
               </button>
@@ -240,13 +257,12 @@ export function AuditLog() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                          event.severity === 'error' || event.severity === 'critical'
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${event.severity === 'error' || event.severity === 'critical'
                             ? 'bg-red-100 dark:bg-red-900/30'
                             : event.severity === 'warning'
-                            ? 'bg-amber-100 dark:bg-amber-900/30'
-                            : 'bg-slate-100 dark:bg-slate-800'
-                        }`}>
+                              ? 'bg-amber-100 dark:bg-amber-900/30'
+                              : 'bg-slate-100 dark:bg-slate-800'
+                          }`}>
                           {getActionIcon(event.action)}
                         </div>
                         <span className="font-medium text-slate-800 dark:text-white">{event.action}</span>

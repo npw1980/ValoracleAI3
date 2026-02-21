@@ -117,13 +117,36 @@ const behavioralInsights = [
   { id: '3', title: 'Anchoring in Pricing', description: 'Initial price reference significantly impacts value perception', category: 'Behavioral Economics', confidence: 85 },
 ];
 
+import { useEffect } from 'react';
+import { getChatMessages, sendChatMessage } from '../services/api';
+
 export function MarketResearch() {
   const [activeTab, setActiveTab] = useState('advisors');
   const [searchQuery, setSearchQuery] = useState('');
   const [showLiveChat, setShowLiveChat] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOn, setIsVideoOn] = useState(true);
+
+  useEffect(() => {
+    getChatMessages().then(data => setChatMessages(data)).catch(console.error);
+  }, []);
+
+  const handleSendMessage = async () => {
+    if (!chatMessage.trim()) return;
+    try {
+      const newMessage = await sendChatMessage({
+        user: 'You',
+        message: chatMessage.trim(),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      setChatMessages(prev => [...prev, newMessage]);
+      setChatMessage('');
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
+  };
 
   const filteredAdvisors = advisors.filter(advisor =>
     advisor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -229,11 +252,10 @@ export function MarketResearch() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-              activeTab === tab.id
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
-            }`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === tab.id
+              ? 'bg-blue-600 text-white'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+              }`}
           >
             <tab.icon className="w-4 h-4" />
             {tab.label}
@@ -606,11 +628,7 @@ export function MarketResearch() {
               </div>
 
               {/* Messages */}
-              {[
-                { user: 'Dr. Sarah Chen', message: 'We\'re seeing significant uptake in PD-L1 high patients...', time: '2:34 PM' },
-                { user: 'Dr. Michael Rodriguez', message: 'What about the budget impact for smaller practices?', time: '2:35 PM' },
-                { user: 'Dr. Lisa Thompson', message: 'In my experience, the rebate structures have been key...', time: '2:36 PM' },
-              ].map((msg, i) => (
+              {chatMessages.map((msg, i) => (
                 <div key={i} className="flex gap-3">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
                     {msg.user.split(' ').map(n => n[0]).join('')}
@@ -633,9 +651,12 @@ export function MarketResearch() {
                   placeholder="Type your message..."
                   value={chatMessage}
                   onChange={(e) => setChatMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSendMessage();
+                  }}
                   className="flex-1"
                 />
-                <Button>
+                <Button onClick={handleSendMessage}>
                   <Send className="w-4 h-4" />
                 </Button>
               </div>

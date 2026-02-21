@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useAppStore } from './stores/appStore';
 import { Layout } from './components/layout/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { Assets } from './pages/Assets';
@@ -21,8 +23,23 @@ import { MarketResearch } from './pages/MarketResearch';
 import { APIDocumentation } from './pages/APIDocs';
 import { MobileApp } from './pages/MobileApp';
 import { Placeholder } from './pages/Placeholder';
+import { ProjectDetail } from './pages/ProjectDetail';
 
 function App() {
+  const { settings } = useAppStore();
+
+  useEffect(() => {
+    const isDark =
+      settings.theme === 'dark' ||
+      (settings.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [settings.theme]);
+
   return (
     <BrowserRouter>
       <Routes>
@@ -39,6 +56,7 @@ function App() {
           <Route path="contracts" element={<Contracts />} />
           <Route path="library" element={<Library />} />
           <Route path="projects" element={<Projects />} />
+          <Route path="projects/:id" element={<ProjectDetail />} />
           <Route path="heor" element={<HEORModelBuilder />} />
           <Route path="data" element={<DataCatalog />} />
           <Route path="audit" element={<AuditLog />} />

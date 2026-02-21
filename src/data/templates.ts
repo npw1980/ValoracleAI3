@@ -5,6 +5,7 @@ export interface WorkflowTemplate {
   name: string;
   description: string;
   category: 'launch' | 'analysis' | 'contract' | 'research' | 'heor';
+  type?: string;
   duration: string;
   steps: WorkflowPhase[];
   estimatedCost?: string;

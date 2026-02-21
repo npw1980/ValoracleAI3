@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Eye,
   CheckCircle2,
+  AlertCircle,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -404,9 +405,8 @@ export function HEORModelBuilder() {
                   <button
                     key={scenario.id}
                     onClick={() => setSelectedScenario(scenario.id)}
-                    className={`w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 ${
-                      selectedScenario === scenario.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-                    }`}
+                    className={`w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 ${selectedScenario === scenario.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                      }`}
                   >
                     <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{scenario.name}</span>
                     {scenario.id === 'base' && (
@@ -455,12 +455,21 @@ export function HEORModelBuilder() {
                 </div>
 
                 <div className="pt-4 border-t border-slate-100 dark:border-slate-700">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-500" />
-                    <span className="text-sm font-medium text-green-700 dark:text-green-400">
-                      Cost-effective at $50K/QALY threshold
-                    </span>
-                  </div>
+                  {results.icer <= 50000 ? (
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      <span className="text-sm font-medium text-green-700 dark:text-green-400">
+                        Cost-effective at $50K/QALY threshold
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="w-5 h-5 text-red-500" />
+                      <span className="text-sm font-medium text-red-700 dark:text-red-400">
+                        Not cost-effective at $50K/QALY threshold
+                      </span>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

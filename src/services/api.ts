@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3002/api';
+const API_BASE = 'http://localhost:3001/api';
 import { useAppStore } from '../stores/appStore';
 
 interface DashboardStats {
@@ -136,6 +136,78 @@ export async function getAdvisor(id: string) {
 
 export async function createAdvisor(data: Omit<TeamMember, 'id'>) {
   return fetchAPI<TeamMember>('/advisors', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+
+// Market Research Chat
+export interface ChatMessage {
+  id: string;
+  user: string;
+  message: string;
+  time: string;
+  isAdvisors?: boolean;
+}
+
+export async function getChatMessages() {
+  return fetchAPI<ChatMessage[]>('/market-research/chat');
+}
+
+export async function sendChatMessage(data: Omit<ChatMessage, 'id'>) {
+  return fetchAPI<ChatMessage>('/market-research/chat', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+
+// Research Documents
+export interface ResearchDocument {
+  id: string;
+  title: string;
+  type: string;
+  date: string;
+  size: string;
+  author: string;
+  status: string;
+}
+
+export async function getResearchDocuments() {
+  return fetchAPI<ResearchDocument[]>('/research/documents');
+}
+
+export async function createResearchDocument(data: Partial<ResearchDocument>) {
+  return fetchAPI<ResearchDocument>('/research/documents', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+// Workflows
+export interface Workflow {
+  id: string;
+  name: string;
+  type: string;
+  status: string;
+  progress: number;
+  stepsCompleted?: number;
+  stepsTotal?: number;
+  dueDate: string;
+  assignees: string[];
+  tasks: Record<string, unknown>[];
+  documents: Record<string, unknown>[];
+  insights: Record<string, unknown>[];
+  createdAt: string;
+}
+
+export async function getWorkflows() {
+  return fetchAPI<Workflow[]>('/workflows');
+}
+
+export async function createWorkflow(data: Partial<Workflow>) {
+  return fetchAPI<Workflow>('/workflows', {
     method: 'POST',
     body: JSON.stringify(data),
   });

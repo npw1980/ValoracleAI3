@@ -9,6 +9,89 @@ app.use(cors());
 app.use(express.json());
 
 // ============================================
+// AUDIT LOGGING
+// ============================================
+
+const auditLogs: any[] = [];
+
+app.post('/api/audit', (req, res) => {
+  const { entries } = req.body;
+
+  if (!Array.isArray(entries)) {
+    res.status(400).json({ error: 'entries must be an array' });
+    return;
+  }
+
+  // Store entries (in production, this would write to Cloud Logging)
+  auditLogs.push(...entries);
+
+  // TODO: Write to GCP Cloud Logging
+  // TODO: Write to client's dedicated log bucket
+
+  res.status(201).json({ received: entries.length });
+});
+
+app.get('/api/audit', (req, res) => {
+  const clientId = req.headers['x-client-id'] as string;
+
+  const filtered = clientId
+    ? auditLogs.filter((log: any) => log.clientId === clientId)
+    : auditLogs;
+
+  res.json(filtered);
+});
+
+// ============================================
+// MARKET RESEARCH CHAT
+// ============================================
+
+const chatMessages: any[] = [
+  { id: 'msg-1', user: 'Dr. Sarah Jenkins', message: 'The current standard of care leaves a significant gap in progression-free survival for these patients.', time: '10:05 AM', isAdvisors: true },
+  { id: 'msg-2', user: 'Michael Chen', message: 'I agree. Are payers currently receptive to a premium price for a 3-month PFS improvement?', time: '10:07 AM', isAdvisors: true },
+  { id: 'msg-3', user: 'Dr. Robert Steele', message: 'In our region, they want to see at least 4-5 months PFS to justify anything above $12k/month.', time: '10:10 AM', isAdvisors: true }
+];
+
+app.get('/api/market-research/chat', (req, res) => {
+  res.json(chatMessages);
+});
+
+app.post('/api/market-research/chat', (req, res) => {
+  const newMessage = {
+    ...req.body,
+    id: uuidv4(),
+  };
+  chatMessages.push(newMessage);
+  res.status(201).json(newMessage);
+});
+
+// ============================================
+// RESEARCH DOCUMENTS
+// ============================================
+
+const researchDocuments: any[] = [
+  { id: '1', title: 'Q1 Global Market Access Report.pdf', type: 'Report', date: 'Feb 13, 2026', size: '2.4 MB', author: 'Sarah M.', status: 'Final' },
+  { id: '2', title: 'Competitor Landscape Analysis - Oncology.pptx', type: 'Presentation', date: 'Feb 12, 2026', size: '15.1 MB', author: 'John D.', status: 'Draft' },
+  { id: '3', title: 'EU Payer Interview Transcripts.docx', type: 'Raw Data', date: 'Feb 10, 2026', size: '1.2 MB', author: 'Mike R.', status: 'Reviewed' }
+];
+
+app.get('/api/research/documents', (req, res) => {
+  res.json(researchDocuments);
+});
+
+app.post('/api/research/documents', (req, res) => {
+  const newDocument = {
+    ...req.body,
+    id: uuidv4(),
+    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    size: '0.1 MB', // Mock size
+    author: 'Current User', // Mock author
+    status: 'Draft'
+  };
+  researchDocuments.push(newDocument);
+  res.status(201).json(newDocument);
+});
+
+// ============================================
 // REAL WORLD PHARMACEUTICAL ASSETS DATA
 // Based on actual drugs in development 2025-2026
 // ============================================
@@ -30,7 +113,7 @@ const assets: any[] = [
     target: 'GLP-1R, GIPR',
     clinicalTrials: ['SURPASS-1', 'SURPASS-2', 'SURPASS-3', 'SURPASS-4', 'SURPASS-5', 'SURMOUNT-1', 'SURMOUNT-2', 'SURMOUNT-3', 'SURMOUNT-4'],
     peakSales: 15000000000,
-   launchDate: '2022-05-13',
+    launchDate: '2022-05-13',
     pricePerYear: 10600,
     competitors: ['Semaglutide (Novo Nordisk)', 'Retatrutide (Eli Lilly)', 'Cagrilintide (Novo Nordisk)'],
     keyEndpoints: ['HbA1c reduction', 'Weight loss %', 'Body weight'],
