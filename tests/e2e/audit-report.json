@@ -1,0 +1,210 @@
+{
+  "timestamp": "2026-02-21T03:48:33.932Z",
+  "totalPages": 19,
+  "passed": 18,
+  "failed": 1,
+  "warnings": 0,
+  "results": [
+    {
+      "page": "Dashboard",
+      "url": "http://localhost:5173/",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "13 button(s) found"
+      ]
+    },
+    {
+      "page": "Assets",
+      "url": "http://localhost:5173/assets",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "13 button(s) found"
+      ]
+    },
+    {
+      "page": "Projects",
+      "url": "http://localhost:5173/projects",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "17 button(s) found",
+        "19 clickable element(s) found"
+      ]
+    },
+    {
+      "page": "Workspace",
+      "url": "http://localhost:5173/workspace",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "10 button(s) found"
+      ]
+    },
+    {
+      "page": "Research",
+      "url": "http://localhost:5173/research",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "11 button(s) found"
+      ]
+    },
+    {
+      "page": "Analyze",
+      "url": "http://localhost:5173/analyze",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "14 button(s) found"
+      ]
+    },
+    {
+      "page": "Contracts",
+      "url": "http://localhost:5173/contracts",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "13 button(s) found"
+      ]
+    },
+    {
+      "page": "Launch",
+      "url": "http://localhost:5173/launch",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "12 button(s) found",
+        "6 clickable element(s) found"
+      ]
+    },
+    {
+      "page": "HEOR",
+      "url": "http://localhost:5173/heor",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "18 button(s) found",
+        "3 clickable element(s) found"
+      ]
+    },
+    {
+      "page": "Library",
+      "url": "http://localhost:5173/library",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "26 button(s) found",
+        "13 clickable element(s) found"
+      ]
+    },
+    {
+      "page": "Data Catalogdata-catalog",
+      "url": "http://localhost:5173undefined",
+      "status": "fail",
+      "errors": [
+        "page.goto: Protocol error (Page.navigate): Cannot navigate to invalid URL\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173undefined\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      ],
+      "warnings": [],
+      "findings": []
+    },
+    {
+      "page": "Market Research",
+      "url": "http://localhost:5173/market-research",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "24 button(s) found",
+        "5 clickable element(s) found"
+      ]
+    },
+    {
+      "page": "Audit Log",
+      "url": "http://localhost:5173/audit-log",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "8 button(s) found"
+      ]
+    },
+    {
+      "page": "Settings",
+      "url": "http://localhost:5173/settings",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "20 button(s) found"
+      ]
+    },
+    {
+      "page": "Billing",
+      "url": "http://localhost:5173/billing",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "21 button(s) found"
+      ]
+    },
+    {
+      "page": "Onboarding",
+      "url": "http://localhost:5173/onboarding",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "19 button(s) found"
+      ]
+    },
+    {
+      "page": "API Docs",
+      "url": "http://localhost:5173/api-docs",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "8 button(s) found"
+      ]
+    },
+    {
+      "page": "Mobile App",
+      "url": "http://localhost:5173/mobile-app",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "8 button(s) found"
+      ]
+    },
+    {
+      "page": "Work Launcher",
+      "url": "http://localhost:5173/work-launcher",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "findings": [
+        "8 button(s) found"
+      ]
+    }
+  ],
+  "uxIssues": [
+    "1 pages have critical errors"
+  ],
+  "recommendations": [
+    "Fix broken pages first - check routing and component imports"
+  ]
+}
