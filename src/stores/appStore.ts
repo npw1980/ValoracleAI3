@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Asset, Task, Notification, AppContext, UserSettings, ChatMessage } from '../types';
+import type { Client } from '../contexts/ClientContext';
 
 interface AppState {
   // Context
@@ -44,6 +45,10 @@ interface AppState {
   // Command Palette
   commandPaletteOpen: boolean;
   setCommandPaletteOpen: (open: boolean) => void;
+
+  // Client (multi-tenant)
+  client: Client | null;
+  setClient: (client: Client | null) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -115,4 +120,8 @@ export const useAppStore = create<AppState>((set) => ({
   // Command Palette
   commandPaletteOpen: false,
   setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
+
+  // Client (multi-tenant)
+  client: null,
+  setClient: (client) => set({ client }),
 }));

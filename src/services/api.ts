@@ -1,4 +1,5 @@
 const API_BASE = 'http://localhost:3002/api';
+import { useAppStore } from '../stores/appStore';
 
 interface DashboardStats {
   portfolioGrowth: number;
@@ -8,11 +9,22 @@ interface DashboardStats {
   teamMembers: number;
 }
 
+function getClientId(): string | null {
+  return useAppStore.getState().client?.id ?? null;
+}
+
 async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  const clientId = getClientId();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (clientId) {
+    headers['X-Client-ID'] = clientId;
+  }
+
   const response = await fetch(`${API_BASE}${endpoint}`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     ...options,
   });
 

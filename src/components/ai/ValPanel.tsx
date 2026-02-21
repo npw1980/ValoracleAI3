@@ -11,6 +11,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
+import { useAIChat } from '../../hooks/useAIChat';
 import type { ChatMessage } from '../../types';
 
 interface ValPanelProps {
@@ -27,9 +28,9 @@ const quickActions = [
 export function ValPanel({ open, onClose }: ValPanelProps) {
   const { valPanelCollapsed, setValPanelCollapsed, chatMessages, addChatMessage, valQuery, setValQuery } = useAppStore();
   const [input, setInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const prevValQueryRef = useRef(valQuery);
+  const { sendMessage, isLoading } = useAIChat();
 
   // Apply valQuery from store when panel opens - use ref to avoid cascading renders
   useEffect(() => {
@@ -48,7 +49,7 @@ export function ValPanel({ open, onClose }: ValPanelProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage: ChatMessage = {
@@ -59,24 +60,22 @@ export function ValPanel({ open, onClose }: ValPanelProps) {
     };
 
     addChatMessage(userMessage);
+    const messageContent = input;
     setInput('');
-    setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse: ChatMessage = {
+    // Call AI service
+    const response = await sendMessage(messageContent);
+
+    // If there's no response (error), add a fallback message
+    if (!response) {
+      const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `I understand you want to "${input}". Let me help you with that.\n\nAs your AI assistant, I can:\n- Navigate to any page or asset\n- Create workflows and tasks\n- Analyze data and generate insights\n- Answer questions about your portfolio\n\nWhat would you like me to do?`,
+        content: 'Sorry, I encountered an error processing your request. Please check your API configuration and try again.',
         timestamp: new Date().toISOString(),
-        actions: [
-          { id: '1', label: 'Show me assets', type: 'suggestion', action: 'navigate:/assets' },
-          { id: '2', label: 'Create workflow', type: 'command', action: 'workflow:create' },
-        ],
       };
-      addChatMessage(aiResponse);
-      setIsTyping(false);
-    }, 1500);
+      addChatMessage(errorMessage);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -212,7 +211,7 @@ export function ValPanel({ open, onClose }: ValPanelProps) {
               ))
             )}
 
-            {isTyping && (
+            {isLoading && (
               <div className="flex gap-3">
                 <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                   <Bot className="w-4 h-4 text-blue-600" />
